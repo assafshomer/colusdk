@@ -10,11 +10,6 @@ var settings = {
     network: 'testnet'
 }
 
-var assetId = 'LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu'
-
-var params = {
-    assetId: assetId
-}
 
 var Colu = require('colu')
 var colu = new Colu(settings)
