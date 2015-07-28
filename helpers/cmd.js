@@ -8,11 +8,11 @@
 // console.log(__filename)
 
 require('../helpers/bitcoin_helper.js')();
+var assetId = 'LE5arg1fawheJDvZEs9saPBoq9AENQGNxN9zr';
+var toArray = []
 
-var addresses = []
-
-for (i = 0; i < 5; i++) { 
-    addresses.push(newAddress());
+for (i = 1; i < 5; i++) { 
+    toArray.push({address: newAddress(),assetId: assetId,amount: i});
 }
 
-console.log(addresses)
+console.log(toArray)

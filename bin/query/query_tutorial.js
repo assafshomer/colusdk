@@ -10,7 +10,7 @@ var settings = {
     network: 'testnet'
 }
 
-var assetId = 'U4jGVs6gVLkonLumtv3HHCyj9SniUJ9iuAwqy'
+var assetId = 'LE5arg1fawheJDvZEs9saPBoq9AENQGNxN9zr'
 
 var params = {
     assetId: assetId

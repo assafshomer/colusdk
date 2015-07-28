@@ -16,7 +16,7 @@ module.exports = function(){
 		    if(err) {
 		        return console.log(err);
 		    }
-		    console.log("Saved to private keys file [data/private_keys.csv]");
+		    // console.log("Saved to private keys file [data/private_keys.csv]");
 		});
 		return address;
 	};
