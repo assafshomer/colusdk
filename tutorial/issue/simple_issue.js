@@ -1,17 +1,23 @@
+// http://documentation.colu.co/#SimpleIssue
+
 var testnetApi = 'https://testnet.api.coloredcoins.org'
-var coluHost = 'https://dev.engine.colu.co'
+var coluHost = 'https://testnet.engine.colu.co'
+var privateSeed = 'abcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982'
 var settings = {
     coloredCoinsHost: testnetApi,
     coluHost: coluHost,
-    network: 'testnet'
+    network: 'testnet',
+    privateSeed: privateSeed
 }
-var assetId = 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt'
+
+var asset = {
+    amount: 1000000
+}
 
 var Colu = require('colu')
 var colu = new Colu(settings)
-
 colu.on('connect', function () {
-    colu.coloredCoins.stakeholders(assetId,function (err, body) {
+    colu.financedIssue(asset, function (err, body) {
         if (err) return console.error(err)        
         console.log("Body: ",body)
     })

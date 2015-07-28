@@ -1,5 +1,7 @@
+// http://documentation.colu.co/#AssetMetadata
+
 var testnetApi = 'https://testnet.api.coloredcoins.org'
-var coluHost = 'https://dev.engine.colu.co'
+var coluHost = 'https://testnet.engine.colu.co'
 var settings = {
     coloredCoinsHost: testnetApi,
     coluHost: coluHost,
