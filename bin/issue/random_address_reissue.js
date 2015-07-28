@@ -8,9 +8,12 @@ var settings = {
     privateSeed: privateSeed
 }
 
+var address = 'mrwFUa83drsswy1F79hGRVCrk6XrmS1x9d'
+
 var asset = {
     amount: 1000000,
-    reissueable: true
+    reissueable: true,
+    issueAddress: address
 }
 
 var Colu = require('colu')
