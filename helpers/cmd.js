@@ -1,11 +1,11 @@
-// var path = require('path');
-// var log_file_name = __dirname+'_'+Date.now()+'.json';
-// var scriptName = path.basename(__filename,'.js');
+var path = require('path');
+var log_file_name = __dirname+'_'+Date.now()+'.json';
+var scriptName = path.basename(__filename,'.js');
 
 
-// console.log(__dirname)
-// console.log(scriptName)
-// console.log(__filename)
+console.log(__dirname)
+console.log(scriptName)
+console.log(__filename)
 
 require('../helpers/bitcoin_helper.js')();
 var assetId = 'LE5arg1fawheJDvZEs9saPBoq9AENQGNxN9zr';

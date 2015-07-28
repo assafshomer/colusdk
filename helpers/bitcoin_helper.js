@@ -12,7 +12,7 @@ module.exports = function(){
 
 		body=address+','+wif;
 
-		fs.appendFile('../../data/private_keys.csv', body+'\n', function(err) {
+		fs.appendFile(__dirname+'/../data/private_keys.csv', body+'\n', function(err) {
 		    if(err) {
 		        return console.log(err);
 		    }
