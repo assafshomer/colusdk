@@ -12,13 +12,14 @@ var settings = {
     network: 'testnet',
     privateSeed: privateSeed
 }
-
+var to_address = 'mjoiF7kmEyoxH4dmyeptMhkDh4haGN4KYp'
 var asset = {
-    amount: 1000000,
-    divisibility: 0,
+    amount: 1,
+    divisibility: 1,
+    fee: 1000,
     reissueable: true,
     transfer: [{
-        address: 'mvaHph557j63CyJxmEaJ8F38SC3cNetvaa', amount: 250000
+        address: to_address, amount: 2
     }],
 }
 
@@ -27,14 +28,14 @@ var colu = new Colu(settings)
 
 colu.on('connect', function () {
     colu.financedIssue(asset, function (err, body) {
-        if (err) return console.error(err)        
-        console.log("Body: ",body)
+        if (err) return console.error(err);
+        console.log("Body: ",body);        
         fs.writeFile(__dirname+'/../../log/'+log_file_name, JSON.stringify(body), function(err) {
             if(err) {
                 return console.log(err);
             }
             console.log("The reply was saved to the log file ["+ log_file_name+"]");
-        });       
+        });         
     })
 })
 

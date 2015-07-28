@@ -1,3 +1,6 @@
+var fs = require('fs');
+var path = require('path');
+var log_file_name = path.basename(__filename,'.js')+'_'+Date.now()+'.json';
 
 var testnetApi = 'https://testnet.api.coloredcoins.org'
 var coluHost = 'https://dev.engine.colu.co'
@@ -24,6 +27,12 @@ colu.on('connect', function () {
     colu.financedIssue(asset, function (err, body) {
         if (err) return console.error(err)        
         console.log("Body: ",body)
+        fs.writeFile(__dirname+'/../../log/'+log_file_name, JSON.stringify(body), function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            console.log("The reply was saved to the log file ["+ log_file_name+"]");
+        });     
     })
 })
 

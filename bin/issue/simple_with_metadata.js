@@ -14,12 +14,12 @@ var settings = {
 }
 
 var asset = {
-    amount: 1000000,
-    divisibility: 0,
-    reissueable: true,
-    transfer: [{
-        address: 'mvaHph557j63CyJxmEaJ8F38SC3cNetvaa', amount: 250000
-    }],
+    amount: 500,
+    metadata: {        
+        'assetName': 'Mission Impossible 15',
+        'issuer': 'Fox Theatres',
+        'description': 'Movie ticket to see the New Tom Cruise flick'
+    }
 }
 
 var Colu = require('colu')
@@ -34,7 +34,7 @@ colu.on('connect', function () {
                 return console.log(err);
             }
             console.log("The reply was saved to the log file ["+ log_file_name+"]");
-        });       
+        });     
     })
 })
 
