@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var log_file_name = path.basename(__filename,'.js')+'_'+Date.now()+'.json';
+var log_file_name = path.basename(__filename,'.js')+'_'+Date.now()+'.txt';
 
 var testnetApi = 'https://testnet.api.coloredcoins.org'
 var coluHost = 'https://testnet.engine.colu.co'
@@ -10,7 +10,7 @@ var settings = {
     network: 'testnet'
 }
 
-var assetId = 'LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu'
+var assetId = 'U4jGVs6gVLkonLumtv3HHCyj9SniUJ9iuAwqy'
 
 var params = {
     assetId: assetId
@@ -24,7 +24,7 @@ colu.on('connect', function () {
         if (err) return console.error(err)
         var util = require('util')       
         console.log("Body: ",util.inspect(body, {depth:10}))
-        fs.writeFile(__dirname+'/../../log/'+log_file_name, util.inspect(body, {depth:10}), function(err) {
+        fs.writeFile(__dirname+'/../../log/'+log_file_name, util.inspect(body, {depth:10,color:false}), function(err) {
             if(err) {
                 return console.log(err);
             }

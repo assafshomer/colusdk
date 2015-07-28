@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var log_file_name = path.basename(__filename,'.js')+'_'+Date.now()+'.json';
+var log_file_name = path.basename(__filename,'.js')+'_'+Date.now()+'.txt';
 
 var testnetApi = 'https://testnet.api.coloredcoins.org'
 var coluHost = 'https://testnet.engine.colu.co'

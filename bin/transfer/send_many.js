@@ -2,9 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var log_file_name = path.basename(__filename,'.js')+'_'+Date.now()+'.txt';
 
-require('../helpers/bitcoin_helper.js')();
-
-newAddressKeyPair();
+require('../../helpers/bitcoin_helper.js')();
 
 var testnetApi = 'https://testnet.api.coloredcoins.org';
 var coluHost = 'https://testnet.engine.colu.co';
@@ -19,15 +17,15 @@ var settings = {
 
 var assetId = 'LE5arg1fawheJDvZEs9saPBoq9AENQGNxN9zr';
 var fromAddress = 'mgrhPJzH37YctFsNtZGAHgvgEhJQ2A62ss';
-var toAddresses = 'mfhdwaZd9csRDGVPBGVZeup45JpEGvYqhA';
+var toArray = []
+
+for (i = 1; i < 5; i++) { 
+    toArray.push({address: newAddress(),assetId: assetId,amount: i});
+}
 
 var send = {
     from: fromAddress,
-    to: [{
-        address: toAddress,
-        assetId: assetId,
-        amount: 1
-    }],
+    to: toArray,
     metadata: {        
         'assetName': '1 Ticket to see the Chicago Musical on 1/1/2016 at 8 PM',
         'issuer': 'Ticket booth on Times Square',

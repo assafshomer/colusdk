@@ -11,7 +11,7 @@ var settings = {
     network: 'testnet'   
 }
 
-var assetId = 'LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu'
+var assetId = 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt'
 var utxo = 'f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4:1'
 
 

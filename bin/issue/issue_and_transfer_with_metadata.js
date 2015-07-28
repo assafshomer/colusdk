@@ -14,11 +14,16 @@ var settings = {
 }
 
 var asset = {
-    amount: 500,
+    amount: 100,
+    divisibility: 0,
+    reissueable: true,
+    transfer: [{
+        address: 'mvaHph557j63CyJxmEaJ8F38SC3cNetvaa', amount: 10
+    }],
     metadata: {        
-        'assetName': 'Mission Impossible 15',
-        'issuer': 'Fox Theatres',
-        'description': 'Movie ticket to see the New Tom Cruise flick'
+        'assetName': 'Movie Tickets',
+        'issuer': 'Fox Theater',
+        'description': 'Terminator 10'
     }
 }
 
@@ -40,4 +45,3 @@ colu.on('connect', function () {
 })
 
 colu.init()
-
