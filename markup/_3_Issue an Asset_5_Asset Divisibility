@@ -1,0 +1,142 @@
+All the assets we issued so far were issued with integral units. This makes sense for a large class of assets (e.g. representing a Movie Ticket). However, there are many use cases where an asset is naturally divisible. E.g. an asset that represents a currency.
+
+We can issue divisible assets by adding a <b>divisibility</b> key to the asset definition. The value of that key defines the divisibility in terms of the number of places beyond the decimal point.
+
+<b>divisibility:0</b> corresponds to integers (1, 2, 3, etc...)
+<b>divisibility:1</b> corresponds to divisibility up to 1 decimal point (Numbers like 0.1, 0.9, 1.5, etc...)
+<b>divisibility:3</b> corresponds to divisibility up to 3 decimal points (Numbers like 0.001, 0.999, 123.456, etc...)
+
+The <b>Maximal</b> divisibility supported by our SDK is <b>8</b> decimal points (mirroring the fact that 1 bitcoin is divisible to 100,000,000 <a href="http://bitcoin.stackexchange.com/a/117" target="_blank">satoshis</a>).
+
+The one thing to remember when issuing a divisible asset is that 
+[w] the <b>amount</b> value always refers to the <b>lowest</b> denomination[/w] 
+
+For example, if we issue a divisibility 3 asset and specify amount 1, only 0.001 units of that asset will be issued.
+
+Here is an example:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var privateSeed = 'abcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982'
+
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: privateSeed
+}
+
+var asset = {
+    <b>amount</b>: 1,
+    <b>divisibility</b>:3    
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    colu.financedIssue(asset, function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+The response is:
+
+[code]Body:  { txHex: '01000000012d741dd70e927582dc810613dad5fa532b118e270de8df78f13425cddccf879d0000000000ffffffff0358020000000000001976a91496086b626ddb0003826c98d3f9d7acb970da223688ac00000000000000000b6a0943430105201300017078050000000000001976a91496086b626ddb0003826c98d3f9d7acb970da223688ac00000000',
+  assetId: 'LFiGGoWR3dQhGwCcnNEwaxubqPRr4zMZEHXTV',
+  multisigOutputs: [],
+  txid: '5c7a40c40a271fa67aeddb55d0e3d1d429a3f4c6932d5716dd42bef6f248c3bb',
+  receivingAddresses: [ { address: 'muCFjpj3p1wCWYBRD7AS4CLr79LRwyMVa5', amount: 1 } ],
+  issueAddress: 'muCFjpj3p1wCWYBRD7AS4CLr79LRwyMVa5' }[/code]
+
+Let's look at the <a href="http://coloredcoins.org/explorer/testnet/asset/LFiGGoWR3dQhGwCcnNEwaxubqPRr4zMZEHXTV" target="_blank">asset</a> in the explorer:
+
+[code]ASSET NAME: N/A               LOCKED ASSET
+<u>ISSUANCE</u>	
+Name	                   Issuer	Amount	utxo
+LFiGGoWR3dQhGwCcnNEwax...		<b>0.001</b>	5c7a40c40a271fa67aeddb55d0e3d1d429a3f4c6932d5716dd42bef6f248c3bb
+
+<u>HOLDERS</u>
+Address	                                Amount
+muCFjpj3p1wCWYBRD7AS4CLr79LRwyMVa5	<b>0.001</b>
+
+<u>TRANSFER TRANSACTIONS</u>
+No Transactions Found
+
+<u>ISSUE TRANSACTIONS</u>
+5c7a40c40a271fa67aeddb55d0e3d1...
+Sent	0.00002	Asset Sent	<b>0.001</b>[/code]
+
+As another example, let's issue 10 units of a new asset that will be divisible to 1 decimal place, and in the same transaction also transfer 0.1 units to one address and 1 unit to another address:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://dev.engine.colu.co'
+var privateSeed = 'abcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982'
+
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: privateSeed
+}
+
+var asset = {
+    <b>amount</b>: <b>100</b>,
+    <b>divisibility</b>:<b>1</b>,
+    transfer: [{
+        address: 'miPznpFr7xQpWXp3dfYXBXKiVcdLKNPazT', <b>amount: 1</b>
+    },{
+        address: 'mmf1tBpqZqsKuHsrADZTYbm8sdCznci8nn', <b>amount: 10</b>
+    }]
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    colu.financedIssue(asset, function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+The response is:
+
+[code]Body:  { txHex: '010000000164cca9e24675e2448fcf16d3d9af1f1949f46747e78f964e4c67f15ad6bf20e50000000000ffffffff0558020000000000001976a9141f978c90a1bf14a9f65ec9d24f07050a7242fde388ac58020000000000001976a914435713f35be02b0cd541d20ef55d87cea01ffcb088ac58020000000000001976a9144f5a837573766e16244dd953dbe08d504a26e97688ac0000000000000000106a0e4343010520130001010a02259030c8000000000000001976a9144f5a837573766e16244dd953dbe08d504a26e97688ac00000000',
+  assetId: '<b>LJja9jcs6g7iDxHfaAECzwfLbq1YuZbvR9jXs</b>',
+  multisigOutputs: [],
+  txid: '25cea5a15841525d5d4105714cf43216a5f008c26c62995657fbfb40d4f79372',
+  receivingAddresses: 
+   [ { address: 'miPznpFr7xQpWXp3dfYXBXKiVcdLKNPazT', <b>amount: 1</b> },
+     { address: 'mmf1tBpqZqsKuHsrADZTYbm8sdCznci8nn', <b>amount: 10</b> },
+     { address: 'mnkY7CR2qe4g4WXxH7CAcwioxkyBRyto4y', <b>amount: 89</b> } ],
+  issueAddress: 'mnkY7CR2qe4g4WXxH7CAcwioxkyBRyto4y' }[/code]
+
+
+Let's look at the new <a href="http://coloredcoins.org/explorer/testnet/asset/LJja9jcs6g7iDxHfaAECzwfLbq1YuZbvR9jXs" target="_blank">asset</a> in the explorer:
+
+[code]ASSET NAME: N/A                          LOCKED ASSET
+<u>ISSUANCE</u>	
+Name	                       Issuer	Amount	utxo
+LJja9jcs6g7iDxHfaAECzw...		0.1	25cea5a15841525d5d4105714cf43216a5f008c26c62995657fbfb40d4f79372
+
+<u>HOLDERS</u>
+Address	Amount
+miPznpFr7xQpWXp3dfYXBXKiVcdLKNPazT	<b>0.1</b>
+mmf1tBpqZqsKuHsrADZTYbm8sdCznci8nn	<b>1.0</b>
+mnkY7CR2qe4g4WXxH7CAcwioxkyBRyto4y	<b>8.9</b>
+
+<u>TRANSFER TRANSACTIONS</u>
+No Transactions Found
+
+<u>ISSUE TRANSACTIONS</u>
+25cea5a15841525d5d4105714cf432...
+Sent	0.00002	Asset Sent	<b>10.0</b>
+[/code]
+
+Note that in the asset definition we were careful to specify all amounts in the lowest denomination (e.g. we wanted 10 units of a divisibility 1 asset so we specified the amount to be 100).

@@ -1,0 +1,60 @@
+In this section we will work with a specialized query that returns only the list of addresses holding an asset. 
+
+For example, let's look at the <a href="http://coloredcoins.org/explorer/testnet/asset/U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt" target="_blank">U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt</a> asset that was created in the <a href="http://documentation.colu.co/#IssueandTransfer" target="_blank">Issue an Asset|Issue and Transfer</a> section.
+
+We can query for the list of addresses holding the asset and the amount of units held in each by invoking the <b>stakeholders</b> method on the <b>colu.coloredCoins</b> object like so: 
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet'
+}
+
+var assetId = 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt'
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    <b>colu.coloredCoins.stakeholders</b>(<b>assetId</b>,function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+Here is the response:
+
+[code]Body:  { assetId: 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt',
+  holders: 
+   [ { <b>address</b>: 'mvaHph557j63CyJxmEaJ8F38SC3cNetvaa',
+       <b>amount</b>: 250000 },
+     { <b>address</b>: 'mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG',
+       <b>amount</b>: 750000 } ],
+  divisibility: 0,
+  lockStatus: false,
+  someUtxo: '2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453:0' }[/code]
+
+We recognize the two holding addresses <a href="http://coloredcoins.org/explorer/testnet/address/mvaHph557j63CyJxmEaJ8F38SC3cNetvaa" target="_blank">mvaHph557j63CyJxmEaJ8F38SC3cNetvaa</a> and <a href="http://coloredcoins.org/explorer/testnet/address/mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG" target="_blank">mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG</a> holding 250,000 and 750,000 units respectively.
+
+The response also includes the <a href="http://documentation.colu.co/#AssetDivisibility" target="_blank">divisibility</a> (zero in this case) and whether the asset is <a href="http://documentation.colu.co/#ReissuinganAsset" target="_blank">locked or not</a> (unlocked in this case).
+
+This method also supports filtering the results by the <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Benefits#support-for-zero-confirmation-transactions" target="_blank">number of confirmations</a>. We can add a minimal_confirmations parameter to the query like so
+
+[code]var assetId = 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt'
+var <b>minimal_confirmations</b>=1
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    <b>colu.coloredCoins.stakeholders</b>(<b>assetId</b>,<b>minimal_confirmations</b>,function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})[/code]
+
+In this case the response will only return the addresses that hold the asset with <b>at least</b> the desired number of confirmations.

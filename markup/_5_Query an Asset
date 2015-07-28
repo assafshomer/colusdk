@@ -1,0 +1,13 @@
+Assets are publicly available on the Blockchain and their <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Metadata#metadata-and-torrents" target="_blank">metadata publicly available on Bittorent</a>. Therefore, in order to query an asset, we don't need to specify a specific wallet seed, So let's just specify the Colored Coins API and Colu Server URLs
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+
+
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet'
+}[/code]
+
+In the next few sections we describe how to query for asset data and metadata. We begin with the general <b>getassetdata</b> method that retrieves the full set of data and metadata about an asset.

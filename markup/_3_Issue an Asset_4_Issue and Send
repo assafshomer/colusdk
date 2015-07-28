@@ -1,0 +1,66 @@
+One of the strengths of the <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification" target="_blank">new colored coins protocol</a> is the ability to <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Coloring-Scheme#issuance-and-transfer-transactions" target="_blank">issue and send</a> an asset within the same transaction.
+
+Let's try to do that and issue 1 million units of an unlocked asset where upon issuance we send 250,000 units to another address. The destination address is added using the <b>transfer</b> key in the asset definition:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var privateSeed = 'abcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982'
+
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: privateSeed
+}
+
+var asset = {
+    amount: 1000000,
+    reissueable: true,
+    <b>transfer</b>: [{
+        <b>address</b>: 'mvaHph557j63CyJxmEaJ8F38SC3cNetvaa', <b>amount</b>: 250000
+    }]
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    colu.financedIssue(asset, function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+Here is the response
+
+[code]Body:  {
+    txHex: '0100000001239394eeeb02a16e49dd585d8c73223be28c524ac3e1b8463f3a8dd7ca240e750000000000ffffffff0358020000000000001976a914a52b6f9d2e1032c53e213b2e6d8710bf773f5d5d88ac00000000000000000c6a0a4343010526440021940078050000000000001976a914ab1bf706f8b437c269b3551e58b6279a117417d388ac00000000',
+    <b>assetId</b>: 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt',
+    <b>txid</b>: '2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453',
+    <b>receivingAddresses</b>: [{
+        amount: 250000, 
+        address: 'mvaHph557j63CyJxmEaJ8F38SC3cNetvaa' 
+    },{ 
+        amount: 750000, 
+        address: 'mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG' 
+    }],
+    <b>issueAddress</b>: 'mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG'
+}[/code]
+
+Let's look at <a href="http://coloredcoins.org/explorer/testnet/asset/U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt" target="_blank">the asset</a>
+
+[code]<u>HOLDERS</u>
+Address	                                Amount
+mvaHph557j63CyJxmEaJ8F38SC3cNetvaa	250000
+mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG	750000
+
+<u>TRANSFER TRANSACTIONS</u>
+No Transactions Found
+
+<u>ISSUE TRANSACTIONS</u>
+2cf2cbe850e9b6b1daf9b6cd190f1e...
+Sent	0.00002	Asset Sent	1000000[/code]
+
+This time we see that there are two holders to our asset, the new address <a href="http://coloredcoins.org/explorer/testnet/address/mvaHph557j63CyJxmEaJ8F38SC3cNetvaa" target="_blank">mvaHph557j63CyJxmEaJ8F38SC3cNetvaa</a> to which we sent 250,000 units and the issuance address <a href="http://coloredcoins.org/explorer/testnet/address/mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG" target="_blank">mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG</a> which holds the remaining 750,000.

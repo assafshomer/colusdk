@@ -1,0 +1,196 @@
+The full set of asset data can be fetched by calling the <b>getassetdata</b> method of the <b>colu.coloredCoins</b> object with the <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Asset-ID" target="_blank">Asset ID</a>.
+
+Let's try that with the <a href="http://coloredcoins.org/explorer/testnet/asset/U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt" target="_blank">U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt</a> asset that was created in the <a href="http://documentation.colu.co/#IssueandTransfer" target="_blank">Issue an Asset|Issue and Transfer</a> section.
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet'
+}
+
+var assetId = 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt'
+
+var params = {
+    assetId: assetId
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    colu.coloredCoins.getassetdata(params,function (err, body) {
+        if (err) return console.error(err)
+        var util = require('util')        
+        console.log("AssetData: ",util.inspect(body, {depth:10}))
+    })
+})
+
+colu.init()[/code]
+
+Here is the response (note the addition of <i>util.inspect</i> to the log method so that also nested elements are fully displayed):
+
+[code]AssetData:  { <b>assetId</b>: 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt',
+  <b>assetAmount</b>: 1000000,
+  <b>assetTotalAmount</b>: 1000000,
+  <b>assetData</b>: 
+   [ { <b>address</b>: 'mvaHph557j63CyJxmEaJ8F38SC3cNetvaa',
+       <b>amount</b>: 250000,
+       <b>utxo</b>: '2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453:0',
+       <b>metadata</b>: 
+        { assetId: 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt',
+          divisibility: 0,
+          lockStatus: false,
+          someUtxo: '2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453:0',
+          totalSupply: 1000000,
+          numOfHolders: 2,
+          numOfTransfers: 0,
+          numOfIssuance: 1,
+          firstBlock: 508051,
+          issuanceTxid: '2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453' } },
+     { <b>address</b>: 'mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG',
+       <b>amount</b>: 750000,
+       <b>utxo</b>: '2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453:2',
+       <b>metadata</b>: 
+        { assetId: 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt',
+          divisibility: 0,
+          lockStatus: false,
+          someUtxo: '2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453:0',
+          totalSupply: 1000000,
+          numOfHolders: 2,
+          numOfTransfers: 0,
+          numOfIssuance: 1,
+          firstBlock: 508051,
+          issuanceTxid: '2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453' } } ] }[/code]
+
+
+The response details all the available data about the asset. Starting from the Asset ID and the total amount of available units (we will explain the difference between <i>Amount</i> and <i>TotalAmount</i> shortly) through the list of holding addresses and their crediting <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Faq#coloring-utxos" target="_blank">UTXOs</a>.
+
+In the above example, there are two different UTXOs, both from the same transaction <a href="http://coloredcoins.org/explorer/testnet/tx/2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453" target="_blank">2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453</a>: 
+<ul>
+ <li><i>2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453</i>:<b>0</b> 
+The first output (index 0) where 250,000 units where transferred to the address <a href="http://coloredcoins.org/explorer/testnet/address/mvaHph557j63CyJxmEaJ8F38SC3cNetvaa" target="_blank">mvaHph557j63CyJxmEaJ8F38SC3cNetvaa</a></li>
+ <li><i>2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453</i>:<b>2</b>
+The third output (index 2) where 750,000 units remained in the issuance address <a href="http://coloredcoins.org/explorer/testnet/address/mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG" target="_blank">mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG</a></li>
+</ul>
+
+The <b>getassetdata</b> method allows us to filter down the results by specifying two more parameters.
+<ul>
+<li>Filter down to a subset of addresses: This is done by specifying a list of addresses under an <b>addresses</b> key</li>
+<li>Filter down to data with a minimal <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Benefits#support-for-zero-confirmation-transactions" target="_blank">number of confirmations</a> so that we only get UTXOs that were sufficiently confirmed (namely baked into blocks with at least the specified number of confirmations): This is done by specifying the desired minimal number of confirmations under a <b>numConfirmations</b> key</li>
+
+As an example, let's look at the exact same query from before but filter down to only the issuance address <a href="http://coloredcoins.org/explorer/testnet/address/mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG" target="_blank">mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG</a> and with at least 6 confirmations:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet'
+}
+
+var <b>assetId</b> = 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt'
+var <b>addresses</b> = ['mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG']
+var <b>confirmations</b> = 6
+
+var params = {
+    assetId: assetId,
+    <b>addresses</b>: addresses,
+    <b>numConfirmations</b>:confirmations
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    colu.coloredCoins.getassetdata(params,function (err, body) {
+        if (err) return console.error(err)
+        var util = require('util')        
+        console.log("AssetData: ",util.inspect(body, {depth:10}))
+    })
+})
+
+colu.init()[/code]
+
+The response is:
+
+[code]AssetData:  { assetId: 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt',
+  <b>assetAmount</b>: 750000,
+  <b>assetTotalAmount</b>: 1000000,
+  assetData: 
+   [ { <b>address</b>: 'mw7hLtuo9vnBNCs9PL7i2h7oqDfs4j8NJG',
+       amount: 750000,
+       utxo: '2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453:2',
+       metadata: 
+        { assetId: 'U831iMR6M2aXdDSSmY3tyY7ZqpaCqLXQZKWJt',
+          divisibility: 0,
+          lockStatus: false,
+          someUtxo: '2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453:0',
+          totalSupply: 1000000,
+          numOfHolders: 2,
+          numOfTransfers: 0,
+          numOfIssuance: 1,
+          firstBlock: 508051,
+          issuanceTxid: '2cf2cbe850e9b6b1daf9b6cd190f1e04eda43599e66f8600f118d5f5dae62453' } } ] }[/code]
+
+This example also clarifies the difference between <b>assetAmount</b> and <b>assetTotalAmount</b>. The former counts only units that match the filter.
+
+Finally, note that the assets we queried so far had no <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Metadata" target="_blank">colored coins metadata</a>. Let's run an example against an asset with metadata, like the <a href="http://coloredcoins.org/explorer/testnet/asset/LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu" target="_blank">LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu</a> asset  we just issued in the <a href="http://documentation.colu.co/#IssuewithMetadata" target="_blank">Issue with Metadata</a> section:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet'
+}
+var assetId = 'LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu'
+
+var params = {
+    assetId: assetId
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    colu.coloredCoins.getassetdata(params,function (err, body) {
+        if (err) return console.error(err)
+        var util = require('util')        
+        console.log("Body: ",util.inspect(body, {depth:10}))
+    })
+})
+
+colu.init()[/code]
+
+The response indeed contains the issuance metadata:
+
+[code]{ assetId: 'LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu',
+  assetAmount: 500,
+  assetTotalAmount: 500,
+  assetData: 
+   [ { address: 'n2SRqdXxbKpZPyVNBCdTM9Y5vHUcLEWVvE',
+       amount: 500,
+       utxo: 'f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4:1',
+       metadata: 
+        { assetId: 'LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu',
+          divisibility: 0,
+          lockStatus: null,
+          someUtxo: 'f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4:1',
+          totalSupply: 500,
+          numOfHolders: 1,
+          numOfTransfers: 0,
+          numOfIssuance: 1,
+          firstBlock: 508271,
+          issuanceTxid: 'f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4',
+          <b>metadataOfIssuence</b>: 
+           { data: 
+              { <b>assetName</b>: 'Mission Impossible 15',
+                <b>issuer</b>: 'Fox Theatres',
+                <b>description</b>: 'Movie ticket to see the New Tom Cruise flick' } },
+          <b>sha2Issue</b>: '034976c163e25cfd8ff92c1962c2cbbb8fd60f3cf6a818e0bcac5fcb7e239ef332' } } ] }[/code]
+
+Note the <b>sha2Issue</b> field. This is a <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Metadata#bittorrent-sha1-and-security" target="_blank">hash of the metadata</a> that is <b>embedded in the blockchain</b> <a href="https://testnet3.toshi.io/api/v0/transactions/f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4" target="_blank">(check out the first output script)</a> so that we can verify that the torrent data (stored on the Bittorrent network, not on the blockchain) is the correct data.
+
+The <b>getassetdata</b> method is useful because it return a comprehensive answer about an asset's data. In the next couple of sections we cover some specialized queries that return smaller subsets of the full data relevant to an asset.

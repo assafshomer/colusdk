@@ -1,0 +1,5 @@
+In this getting started guide we will walk you through the two core examples of the <a href="http://colu.co/" target="_blank">Colu</a> SDK, <b>issuing</b> a new asset and <b>transferring</b> an existing asset.
+
+The examples given in this guide are written in javascript using the popular libraries <a href="https://nodejs.org/" target="_blank">node js</a> and <a href="http://bitcoinjs.org/" target="_blank">bitcoinjs</a>
+
+First, we will walk you through the necessary steps needed to setup your machine in order to follow the rest of the guide.

@@ -1,0 +1,30 @@
+Colu's SDK is currently available only for <a href="https://nodejs.org/" target="_blank">node js</a> (more languages coming soon).
+For completeness, this section walks you through the installation process of node js on Linux (Ubuntu).
+
+Start with downloading the package by launching a terminal window and typing:
+
+[code]> curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
+[/code]
+
+Install node js by typing
+
+[code]> sudo apt-get install -y nodejs
+[/code]
+
+[i] Verify your node js installation[/i]
+
+Open a text editor and save the following in a file called example.js
+[code]var http = require('http');
+http.createServer(function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('Colu\n');
+}).listen(1337, '127.0.0.1');
+console.log('Server running at http://127.0.0.1:1337/');
+[/code]
+
+Now launch a terminal window and type
+
+[code]> node example.js
+[/code]
+
+Launch a web browser and visit <a href="http://127.0.0.1:1337/" target="_blank">localhost:1337</a>. You should see the text "Colu"

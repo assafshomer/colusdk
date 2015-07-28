@@ -1,0 +1,172 @@
+In this section we will discuss asset <a href="http://coloredcoins.org/explorer/testnet/asset/U8Ew4thrMmMkCHMicFAB7WXiBeKiFRdEiijbb" target="_blank">re-issuance</a> and it's relation to the concepts of <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Benefits#locked-assets" target="_blank">Locked</a> and <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Benefits#unlocked-assets" target="_blank">Unlocked</a> assets.
+
+Note that for all the assets that we issued in the previous sections, the explorer displayed a <b>LOCKED ASSET</b> symbol near the asset name. <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Benefits#locked-assets" target="_blank">Locked Assets</a> are asset that are issued once and cannot be re-issued. There can be an <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Faq#how-many-assets-can-be-in-one-address" target="_blank">unlimited number</a> of locked assets in one Bitcoin address.
+
+<a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Benefits#unlocked-assets" target="_blank">Unlocked</a> assets on the other hand are tied to the issuance address in a way that we explore below.
+
+Let's start by issuing an Unlocked asset. We do that by including the <b>reissuable</b> key in the asset definition and setting it to true:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var privateSeed = 'abcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982'
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: privateSeed
+}
+
+var asset = {
+    amount: 1000000,
+    <b>reissueable</b>: true   
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    colu.financedIssue(asset, function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+
+Here is the response:
+[code]Body:  { txHex: '01000000017b58760bcdbe7c4701dc53f546ed1edc4ff6adf5b0ce35e162a56f8bba5aa2440000000000ffffffff0358020000000000001976a9145ed9f47408f7bc2567b8ef7da07c17e7e06f382c88ac00000000000000000c6a0a4343010526440026440078050000000000001976a9145ed9f47408f7bc2567b8ef7da07c17e7e06f382c88ac00000000',
+  assetId: 'U5haTxTknzcq94czuXQRHa7Nw38BUxnQWAX6w',
+  multisigOutputs: [],
+  txid: '72ea2228a6e555228a4e84685932eac1b395bfe512e81ce8bf9f27649be14dff',
+  receivingAddresses: 
+   [ { address: 'mpAUurhbWXFtczKVPn7iLf7rfcDhMdH6tH',
+       amount: 1000000 } ],
+  issueAddress: 'mpAUurhbWXFtczKVPn7iLf7rfcDhMdH6tH' }[/code]
+
+Let's look at this <a href="http://coloredcoins.org/explorer/testnet/asset/U5haTxTknzcq94czuXQRHa7Nw38BUxnQWAX6w" target="_blank">asset</a> in the explorer:
+
+[code]ASSET NAME: N/A                          <b>UNLOCKED ASSET</b>
+
+<u>ISSUANCE</u>
+Name	                  Issuer	Amount	utxo
+U5haTxTknzcq94czuXQRHa...		1000000	72ea2228a6e555228a4e84685932eac1b395bfe512e81ce8bf9f27649be14dff
+
+<u>HOLDERS</u>
+Address	Amount
+mpAUurhbWXFtczKVPn7iLf7rfcDhMdH6tH	1000000
+
+<u>TRANSFER TRANSACTIONS</u>
+No Transactions Found
+ISSUE TRANSACTIONS
+72ea2228a6e555228a4e84685932ea...
+Sent	0.00002	Asset Sent	1000000
+[/code]
+
+Again we see that 1 million units were issued, only this time the asset is designated as <b>UNLOCKED</b>. What this means is that we can <b>REISSUE</b> it, i.e. make another issuance call and <b>create more units</b>.
+
+When an unlocked asset is reissued we must specify the issuance address by adding an <b>issueAddress</b> key to the asset definition. So let's do that and reissue our <a href="http://coloredcoins.org/explorer/testnet/asset/U5haTxTknzcq94czuXQRHa7Nw38BUxnQWAX6w" target="_blank">U5haTxTknzcq94czuXQRHa7Nw38BUxnQWAX6w</a> asset on the issuance address <a href="http://coloredcoins.org/explorer/testnet/address/mpAUurhbWXFtczKVPn7iLf7rfcDhMdH6tH" target="_blank">mpAUurhbWXFtczKVPn7iLf7rfcDhMdH6tH</a>:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var privateSeed = 'abcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982'
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: privateSeed
+}
+
+<b>issueAddress</b> = 'mpAUurhbWXFtczKVPn7iLf7rfcDhMdH6tH'
+
+var asset = {
+    amount: 1000000,
+    <b>reissueable</b>: true,
+    <b>issueAddress</b>: issueAddress
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    colu.financedIssue(asset, function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+And the response we get is:
+
+[code]Body:  { txHex: '0100000001a60a3017dd145682ba55e06fe8069cb10bbab0adf27d5493d36a9b04ea9719b70000000000ffffffff0358020000000000001976a9145ed9f47408f7bc2567b8ef7da07c17e7e06f382c88ac00000000000000000c6a0a4343010526440026440078050000000000001976a9145ed9f47408f7bc2567b8ef7da07c17e7e06f382c88ac00000000',
+  <b>assetId</b>: 'U5haTxTknzcq94czuXQRHa7Nw38BUxnQWAX6w',
+  multisigOutputs: [],
+  txid: 'a9918d8081a13ba6550f0dc8f52266b810447d05df8395ad59919a2bcc54ae56',
+  receivingAddresses: 
+   [ { address: 'mpAUurhbWXFtczKVPn7iLf7rfcDhMdH6tH',
+       amount: 1000000 } ],
+  <b>issueAddress</b>: 'mpAUurhbWXFtczKVPn7iLf7rfcDhMdH6tH' }[/code]
+
+So it looks like we succeeded in issuing the same assetID on the same address. Let's verify that with the explorer by looking at the asset:
+
+[code]ASSET NAME: N/A                          <b>UNLOCKED ASSET</b>
+<u>ISSUANCE</u>	
+Name	                           Issuer	Amount	utxo
+	U5haTxTknzcq94czuXQRHa...		<b>1000000</b>	72ea2228a6e555228a4e84685932eac1b395bfe512e81ce8bf9f27649be14dff
+	U5haTxTknzcq94czuXQRHa...		<b>1000000</b>	a9918d8081a13ba6550f0dc8f52266b810447d05df8395ad59919a2bcc54ae56
+
+<u>HOLDERS</u>
+Address	Amount
+mpAUurhbWXFtczKVPn7iLf7rfcDhMdH6tH	2000000
+
+<u>TRANSFER TRANSACTIONS</u>
+No Transactions Found
+ISSUE TRANSACTIONS
+72ea2228a6e555228a4e84685932ea...
+Sent	0.00002	Asset Sent	1000000
+a9918d8081a13ba6550f0dc8f52266...
+Sent	0.00002	Asset Sent	1000000
+[/code]
+
+Indeed, now there are 2 million units, both still sitting in the issuance address.
+
+As an aside, let's try to issue an asset on an address to which we don't own the private key. An easy way to try that is to change one character in the wallet private seed. For example, below we changed the first letter <b>a</b> to <b>b</b>. The rest of the call is identical to what we did above:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var <b>privateSeed</b> = '<b>b</b>bcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982'
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: privateSeed
+}
+
+issueAddress = 'mpAUurhbWXFtczKVPn7iLf7rfcDhMdH6tH'
+
+var asset = {
+    amount: 1000000,
+    reissueable: true,
+    issueAddress: issueAddress
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    colu.financedIssue(asset, function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+
+The response is
+
+[code]Addresss mpAUurhbWXFtczKVPn7iLf7rfcDhMdH6tH privateKey not found[/code]
+
+
+which is to be expected, since obviously we shouldn't be able to issue an asset on an address that we don't control.

@@ -1,0 +1,56 @@
+In this section we will learn about a specialized query tailored to getting asset metadata.
+
+One of the strengths of the new <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki" target="_blank">colored coins protocol</a> is the ability to <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Benefits#metadata-on-every-colored-transaction" target="_blank">add metadata to every colored transaction</a>. Therefore, when we query for an asset's metadata we must specify not only the <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Asset%20ID" target="_blank">asset ID</a> but the specific <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Faq#coloring-utxos" target="_blank">UTXO</a>.
+
+In the <a href="http://documentation.colu.co/#AssetData" target="_blank">Asset Data section</a> we retrieved data for the  <a href="http://coloredcoins.org/explorer/testnet/asset/LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu" target="_blank">LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu</a> asset.
+Let's use that asset ID and the one UTXO 'f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4:1' that was retrieved there to query for the metadata:
+
+[code]var assetId = 'LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu'
+var utxo = 'f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4:1'[/code]
+
+and query the asset's metadata by invoking the <b>assetmetadata</b> method on the <b>colu.coloredCoins</b> object like so: 
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet'
+}
+
+var <b>assetId</b> = 'LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu'
+var <b>utxo</b> = 'f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4:1'
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    <b>colu.coloredCoins.assetmetadata</b>(<b>assetId</b>,<b>utxo</b>,function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+Here is the response:
+
+[code]Body:  { assetId: 'LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu',
+  divisibility: 0,
+  lockStatus: true,
+  someUtxo: 'f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4:1',
+  totalSupply: 500,
+  numOfHolders: 1,
+  numOfTransfers: 0,
+  numOfIssuance: 1,
+  firstBlock: 508271,
+  issuanceTxid: 'f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4',
+  <b>metadataOfIssuence</b>: 
+   { data: 
+      { <b>assetName</b>: 'Mission Impossible 15',
+        <b>issuer</b>: 'Fox Theatres',
+        <b>description</b>: 'Movie ticket to see the New Tom Cruise flick' } },
+  <b>sha2Issue</b>: '034976c163e25cfd8ff92c1962c2cbbb8fd60f3cf6a818e0bcac5fcb7e239ef332' }[/code]
+
+We recognize the data that we added at issuance in the <a href="http://documentation.colu.co/#IssuewithMetadata" target="_blank">Issue an Asset|Issue with Metadata</a> section.
+

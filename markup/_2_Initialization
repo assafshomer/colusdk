@@ -1,0 +1,89 @@
+Colu's SDK functionality is available through the <b>Colu</b> class.
+
+The <b>Colu</b> class interacts behind the scenes with:
+<ul>
+ <li>The <b><a href="http://coloredcoins.org/documentation" target="_blank">ColoredCoins API</a></b>: Issuing and Sending transactions and receiving asset data from the Bitcoin network</li>
+ <li><b>The Colu Server</b>: For financing transactions</li>
+ <li><b>A local Bitcoin Wallet</b>: Generating addresses and keys and signing transactions</li>
+</ul>
+
+[h]HD wallets and the Private Seed[/h]
+
+The Bitcoin wallet is an <a href="https://en.bitcoin.it/wiki/Deterministic_wallet#Type_2_hierarchical_deterministic_wallet" target="_blank">HD wallet</a>, which is highly suitable for businesses. HD wallets are <b>deterministic</b> in the sense that the entire (infinite) tree of available addresses and keys are derivable from a single number, or <b>private seed</b>. This private seed is a <i>Master Key</i> controlling all the funds in the wallet.
+[w] The Private Seed is the single piece of information you need to make sure to manage securely on your end when you use our SDK[/w]
+
+[h]Initializing the Colu Object[/h]
+
+In order to initialize an instance of the Colu class we must provide the constructor with
+
+<ul>
+ <li>The URL of the relevant <a href="http://coloredcoins.org/documentation" target="_blank">ColoredCoins API</a></li>
+ <li>The URL of the Colu Server</li>
+ <li>The type of Bitcoin network (<i>mainnet</i> or <i>testnet</i>)</li>
+ <li>A private seed <i>(optional)</i></li>
+</ul>
+
+[i]If you do not provide a private seed, a random one will be created automatically[/i]
+
+Let's try that. Start with defining the initialization settings for working on top of the Bitcoin testnet network:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: null
+}
+[/code]
+
+Now require the Colu library and initialize a colu object with the above settings:
+
+[code]var Colu = require('colu')
+var colu = new Colu(settings)
+[/code]
+
+Your code will go in the callback for the 'connect' call. For the purpose of this guide let's just log something:
+
+[code]colu.on('connect', function () {
+ console.log("Colu SDK");
+});
+[/code]
+
+To run the code, call the init method
+
+[code]colu.init()
+[/code]
+
+At this point all we see is the log message.
+
+Now let's do something a little more interesting, and log the private seed of the colu object:
+
+[code]
+var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: null
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+colu.on('connect', function () {
+    privateSeed = colu.hdwallet.getPrivateSeed()
+    console.log("privateSeed: ",privateSeed)
+});
+
+colu.init()
+[/code]
+
+In this case we will see an output of this form:
+
+[code]> privateSeed:  abcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982
+[/code]
+
+This newly generated private seed initializes a new HD wallet, so let's use it from now on.

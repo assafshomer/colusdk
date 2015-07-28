@@ -1,0 +1,68 @@
+Colored Coins assets can include arbitrary amounts of <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Metadata" target="_blank">Metadata</a>.
+
+We can embed metadata in the asset at issuance by declaring a <b>metadata</b> key in the asset definition:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var privateSeed = 'abcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982'
+
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: privateSeed
+}
+
+var asset = {
+    amount: 500,
+    <b>metadata</b>: {        
+        '<b>assetName</b>': 'Mission Impossible 15',
+        '<b>issuer</b>': 'Fox Theater',
+        '<b>description</b>': 'Movie ticket to see the New Tom Cruise flick'
+    }
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    colu.financedIssue(asset, function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+This example can be thought of as issuing 500 tickets to a movie.
+
+Here is the response
+
+[code]Body:  { txHex: '0100000001f7782f48ce7bf39e349a97bcb06c48702b4e1dd68fbb9f0e786e8fae81e6c02f0000000000ffffffff04ac0200000000000047512103ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff21034976c163e25cfd8ff92c1962c2cbbb8fd60f3cf6a818e0bcac5fcb7e239ef33252ae58020000000000001976a914e57f8df8e3cae90571da07dc97ac781e1c6aa43288ac0000000000000000206a1e4343010261d5d531d0f6c9254f779ce530de02635e0930ac205201205210cc020000000000001976a914e57f8df8e3cae90571da07dc97ac781e1c6aa43288ac00000000',
+  assetId: 'LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu',
+  multisigOutputs: [],
+  txid: 'f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4',
+  receivingAddresses: [ { address: 'n2SRqdXxbKpZPyVNBCdTM9Y5vHUcLEWVvE', amount: 500 } ],
+  issueAddress: 'n2SRqdXxbKpZPyVNBCdTM9Y5vHUcLEWVvE' }[/code]
+
+Let's look at <a href="http://coloredcoins.org/explorer/testnet/asset/LEUWnac9Pp7kZYC3W19xtVMVqL8jw6m19RZHu" target="_blank">the asset</a>
+
+[code]<b>ASSET NAME: Mission Impossible 15         LOCKED ASSET</b>
+
+<u>ISSUANCE</u>	
+Name	                Issuer	        Amount	utxo
+<b>Mission Impossible 15</b>	<b>Fox Theater</b>	500	f9fff185dc1df89ffe13cd7e5668a0af2953622176de91232ec1be975c6114c4
+
+<u>HOLDERS</u>
+Address	Amount
+n2SRqdXxbKpZPyVNBCdTM9Y5vHUcLEWVvE	500
+
+<u>TRANSFER TRANSACTIONS</u>
+No Transactions Found
+
+<u>ISSUE TRANSACTIONS</u>
+f9fff185dc1df89ffe13cd7e5668a0...
+Sent	0.00002	Asset Sent	500[/code]
+
+This time we see the asset name and asset issuer. Please consult the <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification" target="_blank">colored coins protocol specification</a> to learn about <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Metadata#syntax" target="_blank">more general metadata structures</a> that are supported. <a href="http://documentation.colu.co/#QueryanAsset" target="_blank">Later on</a> we will learn how to use the SDK to query an asset and retrieve the full set of metadata.
+

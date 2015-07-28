@@ -1,0 +1,71 @@
+We start by using the same private seed that we just created in the <a href="http://documentation.colu.co/#Initialization13" target="_blank">initialization</a> section:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var privateSeed = '<b>abcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982</b>'
+
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: privateSeed
+}[/code]
+
+This time we ask the colu object to issue a new asset with 1 million units. This is done by specifying the number of units using the <b>amount</b> key in a json object:
+
+[code]var <b>asset</b> = {
+    <b>amount</b>: 1000000
+}[/code]
+
+Now we can issue this asset by invoking the <b>financedIssue</b> method on the <b>colu</b> object with our <i>asset</i> parameter:
+
+[code]var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    <b>colu.financedIssue</b>(<b>asset</b>, function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+Here is the response:
+
+[code]Body:  { txHex: '010000000181704ea8e573a0a7dbec6e0213d757721f82afc9f91e453b27d2e30c8c4f1ac10000000000ffffffff0358020000000000001976a9147aa6f36ef275974e795f58c207d21a280bbd3af688ac00000000000000000c6a0a4343010526440026441078050000000000001976a9147aa6f36ef275974e795f58c207d21a280bbd3af688ac00000000',
+  <b>assetId</b>: 'LGDBaMSAkgVJ5aoERUzyYcof6c4ypRArGmpZc',
+  multisigOutputs: [],
+  <b>txid</b>: '1ca23e71ca24e4ff16e13009c77c2f67051547a8df1e3e6fc5a9cdb56fcd04ed',
+  <b>receivingAddresses</b>: 
+   [ { address: 'mrhUjQjcZZxMcmPnrCZZ3BqYHNyVeQXCea',
+       amount: 1000000 } ],
+  <b>issueAddress</b>: 'mrhUjQjcZZxMcmPnrCZZ3BqYHNyVeQXCea' }[/code]
+
+The return message tells us that we successfully issued a new asset with id <a href="http://coloredcoins.org/explorer/testnet/asset/LGDBaMSAkgVJ5aoERUzyYcof6c4ypRArGmpZc" target="_blank">LGDBaMSAkgVJ5aoERUzyYcof6c4ypRArGmpZc</a> in transaction <a href="http://coloredcoins.org/explorer/testnet/tx/1ca23e71ca24e4ff16e13009c77c2f67051547a8df1e3e6fc5a9cdb56fcd04ed" target="_blank">1ca23e71ca24e4ff16e13009c77c2f67051547a8df1e3e6fc5a9cdb56fcd04ed</a>.
+The Asset was issued at address <a href="http://coloredcoins.org/explorer/testnet/address/mrhUjQjcZZxMcmPnrCZZ3BqYHNyVeQXCea" target="_blank">mrhUjQjcZZxMcmPnrCZZ3BqYHNyVeQXCea</a> (which is one of the addresses in our local HD wallet).
+
+Let's confirm that using the <a href="http://coloredcoins.org/explorer/testnet/asset" target="_blank">colored coins testnet explorer</a>.
+
+First let's look at <a href="http://coloredcoins.org/explorer/testnet/asset/LGDBaMSAkgVJ5aoERUzyYcof6c4ypRArGmpZc" target="_blank">the asset</a>
+
+[code]ASSET NAME: N/A                           LOCKED ASSET
+
+<u>ISSUANCE</u>
+Name                                            Amount	utxo
+<b>LGDBaMSAkgVJ5aoERUzyYcof6c4ypRArGmpZc</b>		<b>1000000</b>	1ca23e71ca24e4ff16e13009c77c2f67051547a8df1e3e6fc5a9cdb56fcd04ed
+
+<u>HOLDERS</u>
+Address	                                Amount
+<b>mrhUjQjcZZxMcmPnrCZZ3BqYHNyVeQXCea</b>	<b>1000000</b>
+
+<u>TRANSFER TRANSACTIONS</u>
+No Transactions Found
+
+<u>ISSUE TRANSACTIONS</u>
+dba9acac2f0afa45aa5da9c37bc283...
+Sent	0.00002	Asset Sent	1000000[/code]
+
+The explorer confirms that there are 1,000,000 units of our <a href="http://coloredcoins.org/explorer/testnet/asset/LGDBaMSAkgVJ5aoERUzyYcof6c4ypRArGmpZc" target="_blank">LGDBaMSAkgVJ5aoERUzyYcof6c4ypRArGmpZc</a> asset, all sitting in the issuance address <a href="http://coloredcoins.org/explorer/testnet/address/mrhUjQjcZZxMcmPnrCZZ3BqYHNyVeQXCea" target="_blank">mrhUjQjcZZxMcmPnrCZZ3BqYHNyVeQXCea</a>.
+
+Note that if you look at the  <a href="https://testnet3.toshi.io/api/v0/transactions/1ca23e71ca24e4ff16e13009c77c2f67051547a8df1e3e6fc5a9cdb56fcd04ed" target="_blank">issuance transaction</a> you can see that 2000 <a href="http://bitcoin.stackexchange.com/a/117/5960" target="_blank">satoshis</a> were sent to the issuance address and another 1000 paid as transaction fee. Those costs are covered by Colu.

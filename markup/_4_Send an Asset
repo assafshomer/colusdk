@@ -1,0 +1,128 @@
+In this section we will learn how to send an asset from one address to one or more other addresses by invoking the <b>financedSend</b> method of a <b>colu</b> object.
+
+For the purpose of this section, let's issue 500 units of a new asset, representing a ticket to a Broadway show
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org'
+var coluHost = 'https://testnet.engine.colu.co'
+var privateSeed = 'abcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982'
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: privateSeed
+}
+
+var asset = {
+    amount: <b>500</b>,
+    metadata: {        
+        'assetName': '<b>Chicago: The Musical</b>',
+        'issuer': '<b>AMBASSADOR THEATRE, 219 West 49th Street, New York, NY 10019</b>',
+        'description': '<b>Tickets to the show on 1/1/2016 at 8 PM</b>'
+    }
+}
+
+var Colu = require('colu')
+var colu = new Colu(settings)
+
+colu.on('connect', function () {
+    colu.<b>financedIssue</b>(<b>asset</b>, function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+Let's issue that, we get the following response:
+
+[code]{ txHex: '0100000001ea026b5c92d40f01243380b000507fdbb5d7615875be93112786c82ea28c98d1000000001976a9140eb3ffd2c449f56cfdf7f9cb8179fbcabce9c61a88acffffffff04ac0200000000000047512103ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff2103263cd91de248d96c41b7b6fd4e6560c5ab624fec4ba038cbaf3516f10dfd8e3152ae58020000000000001976a9140eb3ffd2c449f56cfdf7f9cb8179fbcabce9c61a88ac0000000000000000206a1e4343010207af7a379075a2b5d55c152bee206f84f59bb3c8205201205210cc020000000000001976a9140eb3ffd2c449f56cfdf7f9cb8179fbcabce9c61a88ac00000000',
+  <b>assetId</b>: 'LE5arg1fawheJDvZEs9saPBoq9AENQGNxN9zr',
+  multisigOutputs: [],
+  txid: '99a508dfece3d5e4ea02aeec2eab3edc65926c174475ee0334fb1217345cfa65',
+  receivingAddresses: [ { address: 'mgrhPJzH37YctFsNtZGAHgvgEhJQ2A62ss', amount: 500 } ],
+  <b>issueAddress</b>: 'mgrhPJzH37YctFsNtZGAHgvgEhJQ2A62ss' }[/code]
+
+Confirming that we our new <a href="http://coloredcoins.org/explorer/testnet/asset/LE5arg1fawheJDvZEs9saPBoq9AENQGNxN9zr" target="_blank">Chicago: The Musical</a> asset was issued with 500 units. 
+
+Now let's send 1 of those units (or tickets) to a new address, say <a href="http://coloredcoins.org/explorer/testnet/address/mfhdwaZd9csRDGVPBGVZeup45JpEGvYqhA" target="_blank">mfhdwaZd9csRDGVPBGVZeup45JpEGvYqhA</a>, by invoking <b>financedSend</b>.
+
+One of the strengths of the new <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki" target="_blank">colored coins protocol</a> is the ability to <a href="https://github.com/Colored-Coins/Colored-Coins-Protocol-Specification/wiki/Benefits#metadata-on-every-colored-transaction" target="_blank">add metadata to every colored transaction</a>. We will use this here and add another piece of metadata, specifying the exact seat in the theater.
+
+To invoke this method we need to specify:
+<ul>
+ <li>The Asset ID </li>
+ <li>The Source Address (from which we send)</li>
+ <li>The Target Address (to which we send)</li>
+ <li>The Amount of units to be sent</li>
+ <li>New Metadata (<i>optional</i>)</li>
+</ul>
+
+Here is the send call:
+
+[code]var testnetApi = 'https://testnet.api.coloredcoins.org';
+var coluHost = 'https://testnet.engine.colu.co';
+var privateSeed = 'abcd4986fdac1b3a710892ef6eaa708d619d67100d0514ab996582966f927982';
+
+var settings = {
+    coloredCoinsHost: testnetApi,
+    coluHost: coluHost,
+    network: 'testnet',
+    privateSeed: privateSeed
+};
+
+var assetId = '<b>LE5arg1fawheJDvZEs9saPBoq9AENQGNxN9zr</b>';
+var fromAddress = '<b>mgrhPJzH37YctFsNtZGAHgvgEhJQ2A62ss</b>';
+var toAddress = '<b>mfhdwaZd9csRDGVPBGVZeup45JpEGvYqhA</b>';
+
+var <b>send</b> = {
+    from: fromAddress,
+    to: [{
+        <b>address</b>: toAddress,
+        <b>assetId</b>: assetId,
+        <b>amount</b>: 1
+    }],
+    <b>metadata</b>: {        
+        'assetName': '<b>1 Ticket to see the Chicago Musical on 1/1/2016 at 8 PM</b>',
+        'issuer': 'Ticket booth on Times Square',
+        'description': '<b>Seat 12 at row 10</b>'
+    }
+};
+
+var Colu = require('colu');
+var colu = new Colu(settings);
+
+colu.on('connect', function () {
+    colu.<b>financedSend</b>(<b>send</b>, function (err, body) {
+        if (err) return console.error(err)        
+        console.log("Body: ",body)
+    })
+})
+
+colu.init()[/code]
+
+Note that we also added new metadata specifying extra information (the position of the particular seat in the theater). 
+
+Here is the response:
+
+[code]{ txHex: '010000000265fa5c341712fb3403ee7544176c9265dc3eab2eecae02eae4d5e3ecdf08a599010000001976a9140eb3ffd2c449f56cfdf7f9cb8179fbcabce9c61a88acffffffff8ef416f61e8ea138f65b05b661779dc2089a0c561307c93f6f1c80d938c6e75e000000001976a9140eb3ffd2c449f56cfdf7f9cb8179fbcabce9c61a88acffffffff04ac0200000000000047512103ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff21038389254c985afc9cec0ab69ee9feda2350328bb9004fe53cd72a1843cc5f2f4a52ae58020000000000001976a91402054158a7b64cc8a06827278145b880c3453b8b88ac00000000000000001c6a1a4343011186ac9b6ace74847c85c1825ce949db9b9d2e5ec4010124050000000000001976a9140eb3ffd2c449f56cfdf7f9cb8179fbcabce9c61a88ac00000000',
+  metadataSha1: '86ac9b6ace74847c85c1825ce949db9b9d2e5ec4',
+  multisigOutputs: [],
+  txid: 'b15a12441343e23fab484fd0be150d505fbb2d4769e67da0a69a413cb9b4724e' }[/code]
+
+You can use the explorer to confirm that indeed 1 unit of our <a href="http://coloredcoins.org/explorer/testnet/asset/LE5arg1fawheJDvZEs9saPBoq9AENQGNxN9zr" target="_blank">Chicago: The Musical</a> asset was sent to the new address <a href="http://coloredcoins.org/explorer/testnet/address/mfhdwaZd9csRDGVPBGVZeup45JpEGvYqhA" target="_blank">mfhdwaZd9csRDGVPBGVZeup45JpEGvYqhA</a>.
+
+[code]ASSET NAME: Chicago: The Musical                                                  LOCKED ASSET
+<u>ISSUANCE</u>
+	
+Name	                Issuer	                                                        Amount	utxo
+Chicago: The Musical	AMBASSADOR THEATRE, 219 West 49th Street, New York, NY 10019	500	99a508dfece3d5e4ea02aeec2eab3edc65926c174475ee0334fb1217345cfa65
+
+<u>HOLDERS</u>
+Address	                                Amount
+<b>mfhdwaZd9csRDGVPBGVZeup45JpEGvYqhA	1</b>
+mgrhPJzH37YctFsNtZGAHgvgEhJQ2A62ss	499
+[/code]
+
+
+
+In the next section we describe how to retrieve asset data and metadata.
