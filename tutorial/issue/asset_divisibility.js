@@ -19,7 +19,7 @@ var Colu = require('colu')
 var colu = new Colu(settings)
 
 colu.on('connect', function () {
-    colu.financedIssue(asset, function (err, body) {
+    colu.issueAsset(asset, function (err, body) {
         if (err) return console.error(err)        
         console.log("Body: ",body)
     })

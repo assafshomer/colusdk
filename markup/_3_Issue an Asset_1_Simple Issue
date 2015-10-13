@@ -17,13 +17,13 @@ This time we ask the colu object to issue a new asset with 1 million units. This
     <b>amount</b>: 1000000
 }[/code]
 
-Now we can issue this asset by invoking the <b>financedIssue</b> method on the <b>colu</b> object with our <i>asset</i> parameter:
+Now we can issue this asset by invoking the <b>issueAsset</b> method on the <b>colu</b> object with our <i>asset</i> parameter:
 
 [code]var Colu = require('colu')
 var colu = new Colu(settings)
 
 colu.on('connect', function () {
-    <b>colu.financedIssue</b>(<b>asset</b>, function (err, body) {
+    <b>colu.issueAsset</b>(<b>asset</b>, function (err, body) {
         if (err) return console.error(err)        
         console.log("Body: ",body)
     })

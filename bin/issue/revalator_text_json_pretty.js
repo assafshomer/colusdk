@@ -13,12 +13,12 @@ var settings = {
 var asset = {
     amount: 1,
     metadata: {        
-        'assetName': 'testing text values',
-        'issuer': 'Assaf',
-        'description': 'story',
+        'assetName': 'Accept Me (feat. Ryan Levine)',
+        'issuer': 'Revalator',
+        'description': 'Song',
         userData:{
             meta:[
-                {key: 'story', value: "consider a legal contract describing the issuer's promise to redeem each unit for goods or services in the real world. That legal document file can be hosted on the issuer's company website and linked using the URL data field. A hash of the document can be stored as well to ensure that the issuer (or otherwise host of the data) did not alter it. Both issuers and holders of an asset can thus refer unambiguously to the original contract against which the asset was issued.", type: "String"}           
+                {key: 'Registration', value: 'foo</br>bar', type: "String"}           
             ]
         }
     }

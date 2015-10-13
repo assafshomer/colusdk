@@ -31,7 +31,7 @@ var Colu = require('colu')
 var colu = new Colu(settings)
 
 colu.on('connect', function () {
-    colu.financedIssue(asset, function (err, body) {
+    colu.issueAsset(asset, function (err, body) {
         if (err) return console.error(err)
         var util = require('util')       
         console.log("Body: ",util.inspect(body, {depth:10}))
