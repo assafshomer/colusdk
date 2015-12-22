@@ -11,7 +11,7 @@ var settings = {
 }
 
 var asset = {
-    amount: 1000000
+    amount: 5000
 }
 
 var Colu = require('colu')
